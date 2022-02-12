@@ -59,11 +59,14 @@ def cli():
         request = requests.get("https://api.polyhaven.com/files/{}".format(item_id))
         data = request.json()
 
+        texture_map_keys = ["AO", "Displacement", "Diffuse", "rough_ao", "nor_gl", "Rough", "diff_png"]
+
         # Go over all available texture types
         for key in data.keys():
-            # Filter out the ones we need
-            if key in ["AO", "Displacement", "Diffuse", "rough_ao", "nor_gl", "Rough"]:
-                # Check resolution is available
+            # Filter out the texture maps that we need
+            # Besides the keys in texture_map_keys, several variations of "col" are also used e.g col1, coll2, col_03
+            if key in texture_map_keys or "col" in key:
+                # Check whether the texture map is available in the requested resolution
                 if args.resolution not in data[key]:
                     print("Skipping " + key + " texture " + item_id + " as the desired resolution is not available.")
                     continue
